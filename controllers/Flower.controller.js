@@ -4,10 +4,17 @@ const raspi = require("../Interface/Raspberry.core");
 // Create a new flower and assign it to the authenticated user
 const createFlower = async (req, res) => {
   try {
-    const { name, set_moisture } = req.body;
+    const { info, pins } = req.body;
+    const { name, set_moisture } = info;
+    const sortedPins = pins.sort((a, b) => parseInt(a) - parseInt(b));
+    const moisture_pin = sortedPins[0];
+    const watering_pin = sortedPins[1];
+
     const flower = await Flower.create({
       name,
       set_moisture,
+      watering_pin,
+      moisture_pin,
       userId: req.user.id, // Assign the flower to the authenticated user
     });
     res.status(201).json({ flower });
@@ -94,7 +101,7 @@ const measureMoisture = async (req, res) => {
   let value;
 
   if (!flower) {
-    res.status(404).send(`Flower with ID ${id} not found`);
+    res.status(404).json({ message: `Flower with ID ${id} not found` });
     return;
   }
 
@@ -103,9 +110,9 @@ const measureMoisture = async (req, res) => {
   try {
     value = await raspi.readMoisture(moisture_pin);
   } catch (error) {
-    res
-      .status(500)
-      .send(`We were unable to read the moisture of the flower with ID ${id}.`);
+    res.status(500).json({
+      message: `We were unable to read the moisture of the flower with ID ${id}.`,
+    });
     return;
   }
 
@@ -123,7 +130,7 @@ const waterFlower = async (req, res) => {
   const flower = await Flower.findByPk(id);
 
   if (!flower) {
-    res.status(404).send(`Flower with ID ${id} not found`);
+    res.status(404).json({ message: `Flower with ID ${id} not found` });
     return;
   }
 
@@ -132,7 +139,9 @@ const waterFlower = async (req, res) => {
   try {
     await raspi.turnOnRelay(watering_pin, duration);
   } catch (error) {
-    res.status(500).send(`We were unable to water the flower with ID ${id}.`);
+    res
+      .status(500)
+      .json({ message: `We were unable to water the flower with ID ${id}.` });
     return;
   }
 

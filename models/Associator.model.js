@@ -12,9 +12,7 @@ Flower.belongsTo(User);
 // Sync the models with the database
 sequelize
   .sync()
-  .then(() => {
-    console.log("Models synced");
-  })
+  .then(() => {})
   .catch((error) => {
     console.error("Error syncing models:", error);
   });

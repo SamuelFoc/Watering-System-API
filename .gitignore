@@ -2,4 +2,3 @@ node_modules
 .env
 Utils
 mydb.sqlite
-setup.js

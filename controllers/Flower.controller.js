@@ -1,4 +1,5 @@
 const { Flower } = require("../models/Associator.model");
+const sequelize = require("../database/database.config");
 const raspi = require("../Interface/Raspberry.core");
 
 // Create a new flower and assign it to the authenticated user
@@ -151,6 +152,40 @@ const waterFlower = async (req, res) => {
   });
 };
 
+const getUsedPins = async (req, res) => {
+  try {
+    const usedWateringPins = await Flower.findAll({
+      attributes: [
+        [
+          sequelize.fn("DISTINCT", sequelize.col("watering_pin")),
+          "watering_pin",
+        ],
+      ],
+      raw: true,
+    });
+
+    const usedMoisturePins = await Flower.findAll({
+      attributes: [
+        [
+          sequelize.fn("DISTINCT", sequelize.col("moisture_pin")),
+          "moisture_pin",
+        ],
+      ],
+      raw: true,
+    });
+
+    const usedPins = {
+      watering_pins: usedWateringPins.map((flower) => flower.watering_pin),
+      moisture_pins: usedMoisturePins.map((flower) => flower.moisture_pin),
+    };
+
+    res.status(200).json(usedPins);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 module.exports = {
   createFlower,
   getFlowers,
@@ -159,4 +194,5 @@ module.exports = {
   getFlowerById,
   waterFlower,
   measureMoisture,
+  getUsedPins,
 };

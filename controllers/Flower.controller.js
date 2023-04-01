@@ -69,9 +69,10 @@ const updateFlower = async (req, res) => {
     if (!flower) {
       return res.status(404).json({ error: "Flower not found" });
     }
-    flower.name = name;
-    flower.set_moisture = set_moisture;
-    await flower.save();
+    await flower.update({
+      name,
+      set_moisture,
+    });
     res.status(200).json({ flower });
   } catch (err) {
     console.error(err);

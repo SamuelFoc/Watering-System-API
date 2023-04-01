@@ -24,14 +24,14 @@ const turnOnRelay = (pin, duration) => {
       if (error) {
         reject(error);
       } else {
-        console.log(`Relay on for ${duration}ms`);
+        console.log(`Relay on for ${duration}s`);
         setTimeout(() => {
           relay.write(0, () => {
             relay.unexport();
             console.log("Relay off");
             resolve();
           });
-        }, duration);
+        }, duration * 1000);
       }
     });
   });

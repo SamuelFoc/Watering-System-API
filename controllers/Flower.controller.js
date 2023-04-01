@@ -144,6 +144,7 @@ const waterFlower = async (req, res) => {
     res
       .status(500)
       .json({ message: `We were unable to water the flower with ID ${id}.` });
+    console.log(error);
     return;
   }
 

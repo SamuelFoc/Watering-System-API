@@ -1,4 +1,4 @@
-//const Gpio = require("onoff").Gpio;
+const Gpio = require("onoff").Gpio;
 
 const readMoisture = (sensorPin) => {
   return new Promise((resolve, reject) => {

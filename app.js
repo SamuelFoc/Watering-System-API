@@ -11,6 +11,7 @@ const app = express();
 const authRoutes = require("./routes/Auth.routes");
 const usersRoutes = require("./routes/User.routes");
 const flowersRoutes = require("./routes/Flower.routes");
+const esp32Routes = require("./routes/Esp32.routes");
 
 // CORS policy
 app.use(cors());
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 
 // Logging In
 app.use("/api/v1/Auth", authRoutes);
+app.use("/api/v1/esp32-update", esp32Routes);
 app.use("/api/v1/Users", passportJWTAuth, usersRoutes);
 app.use("/api/v1/Flowers", passportJWTAuth, flowersRoutes);
 
